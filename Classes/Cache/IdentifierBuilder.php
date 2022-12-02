@@ -91,4 +91,9 @@ class IdentifierBuilder extends StaticFileCacheObject
 
         return true;
     }
+
+    public function hash(string $requestUri): string
+    {
+        return hash('sha256', $requestUri);
+    }
 }

@@ -37,6 +37,14 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class StaticFileBackend extends StaticDatabaseBackend implements TransientBackendInterface
 {
+    protected IdentifierBuilder $identifierBuilder;
+
+    public function __construct($context, array $options = [])
+    {
+        parent::__construct($context, $options);
+        $this->identifierBuilder = GeneralUtility::makeInstance(IdentifierBuilder::class);
+    }
+
     /**
      * Saves data in the cache.
      *
@@ -68,9 +76,7 @@ class StaticFileBackend extends StaticDatabaseBackend implements TransientBacken
         }
 
         $this->logger->debug('SFC Set', [$entryIdentifier, $tags, $lifetime]);
-
-        $identifierBuilder = GeneralUtility::makeInstance(IdentifierBuilder::class);
-        $fileName = $identifierBuilder->getFilepath($entryIdentifier);
+        $fileName = $this->identifierBuilder->getFilepath($entryIdentifier);
 
         try {
             // Create dir
@@ -80,7 +86,7 @@ class StaticFileBackend extends StaticDatabaseBackend implements TransientBacken
             }
 
             $databaseData['url'] = $entryIdentifier;
-            $entryIdentifierForDatabase = $this->hash($entryIdentifier);
+            $entryIdentifierForDatabase = $this->identifierBuilder->hash($entryIdentifier);
 
             // call set in front of the generation, because the set method
             // of the DB backend also call remove (this remove do not remove the folder already created above)
@@ -107,7 +113,7 @@ class StaticFileBackend extends StaticDatabaseBackend implements TransientBacken
         if (!$this->has($entryIdentifier)) {
             return false;
         }
-        $result = parent::get($this->hash($entryIdentifier));
+        $result = parent::get($this->identifierBuilder->hash($entryIdentifier));
         if (!\is_string($result)) {
             return false;
         }
@@ -129,7 +135,7 @@ class StaticFileBackend extends StaticDatabaseBackend implements TransientBacken
         }
 
         if (GeneralUtility::isValidUrl($entryIdentifier)) {
-            $entryIdentifierForDatabase = $this->hash($entryIdentifier);
+            $entryIdentifierForDatabase = $this->identifierBuilder->hash($entryIdentifier);
         } else {
             $entryIdentifierForDatabase = $entryIdentifier;
         }
@@ -333,11 +339,6 @@ class StaticFileBackend extends StaticDatabaseBackend implements TransientBacken
         foreach ($expiredIdentifiers as $identifier) {
             $this->removeStaticFiles($identifier);
         }
-    }
-
-    protected function hash(string $entryIdentifier): string
-    {
-        return hash('sha256', $entryIdentifier);
     }
 
     /**

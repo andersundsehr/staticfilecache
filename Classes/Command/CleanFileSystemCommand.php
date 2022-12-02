@@ -66,7 +66,7 @@ class CleanFileSystemCommand extends AbstractCommand
             if ($item->isDir() && !$item->isDot()) {
                 if (file_exists($item->getPathname() . '/index')) {
                     $url = $this->pathToUrl($item->getPathname() . ($this->appendSlash ? '/' : ''));
-                    $hash = hash('sha256', $url);
+                    $hash = $this->identifierBuilder->hash($url);
 
                     if (!$this->cacheRepository->findUrlsByIdentifiers([$hash])) {
                         $output->writeln($url);
