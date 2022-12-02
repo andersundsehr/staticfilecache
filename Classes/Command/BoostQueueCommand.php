@@ -24,6 +24,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use function count;
@@ -48,6 +49,7 @@ class BoostQueueCommand extends AbstractCommand implements LoggerAwareInterface
     protected $handler;
     protected RemoveService $removeService;
     protected IdentifierBuilder $identifierBuilder;
+    protected EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         QueueRepository      $queueRepository,
@@ -56,7 +58,8 @@ class BoostQueueCommand extends AbstractCommand implements LoggerAwareInterface
         ClientService        $clientService,
         ConfigurationService $configurationService,
         RemoveService        $removeService,
-        IdentifierBuilder    $identifierBuilder
+        IdentifierBuilder    $identifierBuilder,
+        EventDispatcherInterface $eventDispatcher
     )
     {
         $this->queueRepository = $queueRepository;
@@ -66,6 +69,7 @@ class BoostQueueCommand extends AbstractCommand implements LoggerAwareInterface
         $this->concurrency = (int)$configurationService->get('concurrency');
         $this->removeService = $removeService;
         $this->identifierBuilder = $identifierBuilder;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->user = trim($configurationService->get('user') ?: '');
         $this->pass = trim($configurationService->get('pass') ?: '');
@@ -315,11 +319,9 @@ class BoostQueueCommand extends AbstractCommand implements LoggerAwareInterface
 
     protected function dispatchPoolEvent(): void
     {
-        $event = new PoolEvent([
+        $this->eventDispatcher->dispatch(new PoolEvent([
             'actualConcurrency' => $this->actualConcurrency
-        ]);
-        $eventDispatcher = GeneralUtility::makeInstance(ObjectManager::class)->get(EventDispatcherInterface::class);
-        $eventDispatcher->dispatch($event);
+        ]));
     }
 
     protected function hasAsyncAbility(): bool

@@ -56,6 +56,18 @@ class IdentifierBuilder extends StaticFileCacheObject
         return $resultPath;
     }
 
+    public function getUrl(string $filePath, int $stripPort): string
+    {
+        $p = strpos($filePath, '_');
+        $p2 = strpos($filePath, '_', $p + 1);
+        $first = substr($filePath, 0, $p) . '://' . substr($filePath, $p + 1, $p2 - $p - 1);
+        if ($stripPort && strpos($filePath, '_' . $stripPort)) {
+            return $first . substr($filePath, $p2 + 1 + strlen((string)$stripPort));
+        }
+
+        return  $first . ':' . substr($filePath, $p2 + 1);
+    }
+
     /**
      * Check if the $requestUri is a valid base for cache identifier.
      */

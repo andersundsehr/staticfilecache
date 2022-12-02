@@ -38,6 +38,7 @@ class CleanBoostQueueCommand extends AbstractCommand
         foreach ($rows as $row) {
             $identifierBuilder = GeneralUtility::makeInstance(IdentifierBuilder::class);
             $fileName = $identifierBuilder->getFilepath($row['url']);
+            $output->isVerbose() && $output->writeln('Removing stale queue entry ' . $row['url']);
             $path = dirname($fileName);
             $this->removeService->removeFilesFromDirectoryAndDirectoryItselfIfEmpty($path, $output);
             $this->queueRepository->delete(['uid' => $row['uid']]);

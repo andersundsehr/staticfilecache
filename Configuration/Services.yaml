@@ -17,6 +17,11 @@ services:
       - name: 'console.command'
         command: 'staticfilecache:cleanBoostQueue'
 
+  SFC\Staticfilecache\Command\CleanFileSystemCommand:
+    tags:
+      - name: 'console.command'
+        command: 'staticfilecache:cleanFileSystem'
+
   SFC\Staticfilecache\Command\WarmupCacheCommand:
     tags:
       - name: 'console.command'
