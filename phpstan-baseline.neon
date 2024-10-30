@@ -1,6 +1,71 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$identifier$#"
+			count: 1
+			path: Classes/Domain/Repository/QueueRepository.php
+
+		-
 			message: "#^Function brotli_compress not found\\.$#"
 			count: 1
 			path: Classes/Generator/BrotliGenerator.php
+
+		-
+			message: "#^Call to an undefined static method TYPO3\\\\CMS\\\\Core\\\\Utility\\\\GeneralUtility\\:\\:hideIfDefaultLanguage\\(\\)\\.$#"
+			count: 1
+			path: Classes/Hook/DatamapHook.php
+
+		-
+			message: "#^Call to method add\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 1
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to method concurrency\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 2
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to method getInProgress\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 1
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to method markAsFailed\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 1
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to method notify\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 1
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to method stop\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 1
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to method wait\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 2
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to static method create\\(\\) on an unknown class Spatie\\\\Async\\\\Pool\\.$#"
+			count: 1
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Property SFC\\\\Staticfilecache\\\\Service\\\\BoostService\\:\\:\\$pool has unknown class Spatie\\\\Async\\\\Pool as its type\\.$#"
+			count: 1
+			path: Classes/Service/BoostService.php
+
+		-
+			message: "#^Call to method get\\(\\) on an unknown class TYPO3\\\\CMS\\\\Extbase\\\\Object\\\\ObjectManager\\.$#"
+			count: 1
+			path: Classes/Service/ClientService.php
+
+		-
+			message: "#^Class TYPO3\\\\CMS\\\\Extbase\\\\Object\\\\ObjectManager not found\\.$#"
+			count: 1
+			path: Classes/Service/ClientService.php

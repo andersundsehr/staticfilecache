@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SFC\Staticfilecache\Service;
 
+use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -73,5 +74,20 @@ class RemoveService extends AbstractService
         }
 
         return $this;
+    }
+
+    public function removeFilesFromDirectoryAndDirectoryItselfIfEmpty($path, OutputInterface $output): void
+    {
+        if (file_exists($path)) {
+            $files = array_filter(glob($path . '/*'), 'is_file');
+            foreach ($files as $file) {
+                unlink($file);
+                $output->writeln('deleted ' . $file);
+            }
+            if (count(scandir($path)) === 2) {
+                rmdir($path);
+                $output->writeln('deleted ' . $path);
+            }
+        }
     }
 }

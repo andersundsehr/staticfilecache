@@ -28,7 +28,7 @@ final class IdentifierBuilderTest extends AbstractTest
 
         foreach ($validUris as $uri) {
             $identBuilder = new IdentifierBuilder();
-            static::assertTrue($identBuilder->isValidEntryIdentifier($uri), 'The URI "'.$uri.'" should be valid!');
+            static::assertTrue($identBuilder->isValidEntryIdentifier(hash('sha256', $uri)), 'The URI "' . $uri . '" should be valid!');
         }
     }
 

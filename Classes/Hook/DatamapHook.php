@@ -32,13 +32,17 @@ class DatamapHook extends AbstractHook
 
         $row = BackendUtility::getRecord($table, (int) $id);
         $allowSfc = (bool) $row['tx_staticfilecache_cache'];
-        if (!$allowSfc) {
+        $hidden = isset($GLOBALS['TCA']['pages']['ctrl']['enablecolumns']['disabled']) ? (bool) $row[$GLOBALS['TCA']['pages']['ctrl']['enablecolumns']['disabled']] : false;
+        $deleted = isset($GLOBALS['TCA']['pages']['ctrl']['delete']) ? (bool) $row[$GLOBALS['TCA']['pages']['ctrl']['delete']] : false;
+        $hideIfDefaultLanguage = GeneralUtility::hideIfDefaultLanguage($row['l18n_cfg']);
+        if (!$allowSfc || $hidden || $deleted || $hideIfDefaultLanguage) {
+
             try {
                 // Delete right now!! do not wait until queue is deleting this
                 $configuration = GeneralUtility::makeInstance(ConfigurationService::class);
                 $configuration->override('boostMode', '0');
                 $cacheService = GeneralUtility::makeInstance(CacheService::class);
-                $cacheService->get()->flushByTag('pageId_'.$id);
+                $cacheService->get()->flushByTag('pageId_' . $row['l10n_parent'] ?: $id);
                 $configuration->reset('boostMode');
             } catch (\Exception $ex) {
                 return;

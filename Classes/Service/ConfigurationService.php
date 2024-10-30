@@ -129,4 +129,9 @@ class ConfigurationService extends AbstractService
     {
         return (bool) $this->get($key);
     }
+
+    public function getRetries(): int
+    {
+        return (int)$this->get('retries');
+    }
 }

@@ -59,7 +59,8 @@
 	},
 	"suggest": {
 		"lochmueller/seocli": "Scan websites against SEO criteria and/or trigger the indexing process and cache warming in deployment scripts",
-		"friendsofsymfony/http-cache": "For HTTP proxy cache services like Varnish"
+		"friendsofsymfony/http-cache": "For HTTP proxy cache services like Varnish",
+		"spatie/async": "Uses your highend multi CPU environment to work the boostqueue"
 	},
 	"conflict": {
 		"tomasnorre/crawler": "<11.0.1"

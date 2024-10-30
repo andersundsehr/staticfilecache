@@ -94,7 +94,7 @@ class Configuration extends StaticFileCacheObject
             self::EXTENSION_KEY,
             '',
             [
-                BackendController::class => 'list,boost,support',
+                BackendController::class => 'list,boost,support,reset',
             ],
             [
                 'access' => 'user,group',

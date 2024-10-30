@@ -7,18 +7,62 @@
 	<h1>
 		Boostmode
 	</h1>
+	<style>
+		table th {
+			font-weight: bold;
+			background-color: #333;
+			color: #fff;
+		}
+		table th, table td {
+			padding:3px;
+			border: 0.5px solid #333;
+		}
+		table {
+			width: 100%;
+		}
+	</style>
 
 	<f:if condition="{enable}">
 		<f:then>
 			<p>
-				Nice... you use the boost mode. <strong>BAM!</strong>.<br/>
+				Boost mode is active.<br/>
 				Please take care that the scheduler/cron task that work on the queue is running.
 			</p>
 			<div class="alert alert-notice" role="alert">There are <strong>{open}</strong> items that wait for processing and <strong>{old}</strong> old items.</div>
 
+			<table>
+				<tr>
+					<th>URL</th>
+					<th>Priority</th>
+					<th>HTTP Status</th>
+					<th>Picked by a process</th>
+					<th style="color:red;">Error</th>
+					<th>Tries</th>
+				</tr>
+					<f:for each="{errors}" as="error">
+					<tr>
+						<td>{error.url}</td>
+						<td>{error.cache_priority}</td>
+						<td>{error.call_result}</td>
+						<td>
+							<f:if condition="{error.call_date}">
+								&#10003;
+							</f:if>
+						</td>
+						<td>{error.error}</td>
+						<td>{error.tries}</td>
+					</tr>
+					</f:for>
+			</table>
+
+			<br/>
 			<f:link.action action="boost" class="btn btn-default" arguments="{run: 1}">
 				<core:icon identifier="actions-system-refresh"/>
 				Run 10 items manually
+			</f:link.action>
+			<f:link.action action="reset" class="btn btn-default"	>
+				<core:icon identifier="actions-system-refresh"/>
+				Reset errors and "picked"
 			</f:link.action>
 		</f:then>
 		<f:else>

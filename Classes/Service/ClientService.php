@@ -12,22 +12,13 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use SFC\Staticfilecache\Event\BuildClientEvent;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * ClientService.
  */
 class ClientService extends AbstractService
 {
-    protected EventDispatcherInterface $eventDispatcher;
-
-    /**
-     * PrepareMiddleware constructor.
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
-
     /**
      * Run a single request with guzzle and return status code.
      */
@@ -36,9 +27,9 @@ class ClientService extends AbstractService
         try {
             $host = parse_url($url, PHP_URL_HOST);
             if (false === $host) {
-                throw new \Exception('No host in cache_url', 1263782);
+                throw new \Exception('No host in url', 1263782);
             }
-            $client = $this->getCallableClient($host);
+            $client = $this->getCallableClient($this->getOptions($host));
             $response = $client->get($url);
 
             return (int) $response->getStatusCode();
@@ -49,12 +40,7 @@ class ClientService extends AbstractService
         return 900;
     }
 
-    /**
-     * Get a cllable client.
-     *
-     * @throws \Exception
-     */
-    protected function getCallableClient(string $domain): Client
+    public function getOptions(string $domain): array
     {
         $jar = GeneralUtility::makeInstance(CookieJar::class);
         /** @var SetCookie $cookie */
@@ -73,6 +59,7 @@ class ClientService extends AbstractService
             ],
             'headers' => [
                 'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0',
+                'Http-Host' => $domain
             ],
         ];
 
@@ -88,11 +75,16 @@ class ClientService extends AbstractService
         }
 
         $event = new BuildClientEvent($options, $httpOptions);
-        $this->eventDispatcher->dispatch($event);
+        $eventDispatcher = GeneralUtility::makeInstance(ObjectManager::class)->get(EventDispatcherInterface::class);
+        $eventDispatcher->dispatch($event);
 
         $base = $event->getHttpOptions();
         ArrayUtility::mergeRecursiveWithOverrule($base, $event->getOptions());
+        return $base;
+    }
 
-        return GeneralUtility::makeInstance(Client::class, $base);
+    public function getCallableClient(array $options): Client
+    {
+        return GeneralUtility::makeInstance(Client::class, $options);
     }
 }

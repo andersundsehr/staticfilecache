@@ -26,6 +26,18 @@ ones with this one if possible.
 | **Read online:** | https://docs.typo3.org/p/lochmueller/staticfilecache/main/en-us/ |
 | **TER:**         | https://extensions.typo3.org/extension/staticfilecache/          |
 
+# Additions
+If you want to use the boostQueue feature you have to change your webserver configuration. Example with NGINX is to add
+
+    if ($cookie_staticfilecache = '1') {
+        return 405;
+    }
+
+## Using Async
+
+using the Package "spatie/async":"*" and configuring "concurrency" in Extension configuration will make advantage of boosting multiple url at once.
+I highly recommend enabling loadWatchEnabled with that feature and set a system load limit (loadCap) so the processes check the servers load (if possible).
+
 Support the development of the extension:
 
 - [Amazon wishlist](https://www.amazon.de/hz/wishlist/ls/SWHV1AQPUTH9)

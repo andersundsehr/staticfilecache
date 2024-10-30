@@ -19,6 +19,16 @@ services:
         description: 'Flush the cache. If the boost mode is active, all pages are added to the queue (you have to run the BoostQueueRun Command to recrawl the pages). If you use the force-boost-mode-flush argument, you directly drop the cache even the page is in Boostmode.'
         command: 'staticfilecache:flushCache'
 
+  SFC\Staticfilecache\Command\CleanBoostQueueCommand:
+    tags:
+      - name: 'console.command'
+        command: 'staticfilecache:cleanBoostQueue'
+
+  SFC\Staticfilecache\Command\CleanFileSystemCommand:
+    tags:
+      - name: 'console.command'
+        command: 'staticfilecache:cleanFileSystem'
+
   SFC\Staticfilecache\EventListener\AfterPackageDeactivationListener:
     tags:
       - name: event.listener
@@ -92,3 +102,6 @@ services:
       - name: event.listener
         identifier: 'SfcCacheRuleNoBackendUserListener'
         event: SFC\Staticfilecache\Event\CacheRuleEvent
+
+  SFC\Staticfilecache\Service\BoostService:
+    public: true

@@ -22,7 +22,7 @@ class IdentifierBuilder extends StaticFileCacheObject
      */
     public function getFilepath(string $requestUri): string
     {
-        if (!$this->isValidEntryIdentifier($requestUri)) {
+        if (!$this->isValidEntryUri($requestUri)) {
             throw new \Exception('Invalid RequestUri as cache identifier: '.$requestUri, 2346782);
         }
         $urlParts = parse_url($requestUri);
@@ -51,16 +51,33 @@ class IdentifierBuilder extends StaticFileCacheObject
         return $resultPath;
     }
 
+    public function getUrl(string $filePath, int $stripPort): string
+    {
+        $p = strpos($filePath, '_');
+        $p2 = strpos($filePath, '_', $p + 1);
+        $first = substr($filePath, 0, $p) . '://' . substr($filePath, $p + 1, $p2 - $p - 1);
+        if ($stripPort && strpos($filePath, '_' . $stripPort)) {
+            return $first . substr($filePath, $p2 + 1 + strlen((string)$stripPort));
+        }
+
+        return  $first . ':' . substr($filePath, $p2 + 1);
+    }
+
     /**
      * Check if the $requestUri is a valid base for cache identifier.
      */
-    public function isValidEntryIdentifier(string $requestUri): bool
+    public function isValidEntryIdentifier(string $identifier): bool
+    {
+        return preg_replace('/[a-z0-9]{64}/', '', $identifier) === '';
+    }
+
+    public function isValidEntryUri(string $requestUri): bool
     {
         if (false === GeneralUtility::isValidUrl($requestUri)) {
             return false;
         }
         $urlParts = parse_url($requestUri);
-        $required = ['host', 'path', 'scheme'];
+        $required = ['host', 'scheme'];
         foreach ($required as $item) {
             if (!isset($urlParts[$item]) || mb_strlen($urlParts[$item]) <= 0) {
                 return false;
@@ -68,5 +85,10 @@ class IdentifierBuilder extends StaticFileCacheObject
         }
 
         return true;
+    }
+
+    public function hash(string $requestUri): string
+    {
+        return hash('sha256', $requestUri);
     }
 }
