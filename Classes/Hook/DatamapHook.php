@@ -37,13 +37,12 @@ class DatamapHook extends AbstractHook
         $deleted = isset($GLOBALS['TCA']['pages']['ctrl']['delete']) ? (bool) $row[$GLOBALS['TCA']['pages']['ctrl']['delete']] : false;
         $hideIfDefaultLanguage = GeneralUtility::hideIfDefaultLanguage($row['l18n_cfg']);
         if (!$allowSfc || $hidden || $deleted || $hideIfDefaultLanguage) {
-
             try {
                 // Delete cache
                 $configuration = GeneralUtility::makeInstance(ConfigurationService::class);
                 $configuration->override('boostMode', '0');
                 $cacheService = GeneralUtility::makeInstance(CacheService::class);
-                $cacheService->get()->flushByTag('pageId_' . $row['l10n_parent'] ?: $id);
+                $cacheService->get()->flushByTag('pageId_' . ($row['l10n_parent'] ?: $id));
                 $configuration->reset('boostMode');
             } catch (\Exception $ex) {
                 return;
