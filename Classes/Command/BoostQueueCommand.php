@@ -212,7 +212,6 @@ class BoostQueueCommand extends AbstractCommand implements LoggerAwareInterface
                 ];
             }
             $client = $this->clientService->getCallableClient($options);
-            $this->queueService->removeFromCache($runEntry);
             $url = (string)$uri;
 
             $this->feedPool(
